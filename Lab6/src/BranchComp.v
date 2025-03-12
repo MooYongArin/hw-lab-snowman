@@ -7,8 +7,11 @@ module BranchComp(
 
     // TODO: implement your branch comparator here for checking if
     // value is register is less than or equal to another register
+    reg reg_brLt, reg_brEq;
+    assign brLt = reg_brLt;
+    assign brEq = reg_brEq;
     always@(*) begin
-    assign brLt=(rs1<rs2);
-    assign brEq=(rs1==rs2);
+        reg_brLt <= (rs1<rs2);
+        reg_brEq <= (rs1==rs2);
     end
 endmodule

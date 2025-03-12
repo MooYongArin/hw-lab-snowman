@@ -97,7 +97,7 @@ ImmGen m_ImmGen(
 
 Mux2to1 #(.size(32)) m_Mux_PC(
     .sel(PCSelw),
-    .s0(add_ow),
+    .s0(adder_ow),
     .s1(ALU_ow),
     .out(pc_iw)
 );
