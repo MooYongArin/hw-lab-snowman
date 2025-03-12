@@ -8,15 +8,14 @@ module Mux2to1 #(
     output signed [size-1:0] out    // Output
 );
     // TODO: implement your 2to1 multiplexer here
-    reg [size-1:0]output;
-    assign out = output;
-    
+    reg [size-1:0] reg_out;
+    assign out = reg_out;
     always @(*) begin
         if (sel == 0) begin
-            output <= s0;
-        end 
+            reg_out <= s0;
+        end
         else if (sel == 1) begin
-            output <= s1;
+            reg_out <= s1;
         end
     end
     
