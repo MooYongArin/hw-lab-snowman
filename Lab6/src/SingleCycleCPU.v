@@ -155,7 +155,7 @@ SevenSegmentController #(
     .Selector(selectorWire)
 );
 
-Multiplexer MultiplexerInst (
+SevenSegmentMultiplexer SevenSegmentMultiplexerInst (
     .DataIn(DataIn),
     .Selector(selectorWire),
     .DataOut(numberWire)
