@@ -10,7 +10,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Multiplexer (
+module SevenSegmentMultiplexer (
     input  wire [15:0] DataIn,
     input  wire [ 1:0] Selector,
     output wire [ 3:0] DataOut
