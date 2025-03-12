@@ -18,6 +18,5 @@ module Mux2to1 #(
             reg_out <= s1;
         end
     end
-    
 endmodule
 

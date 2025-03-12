@@ -28,11 +28,9 @@ module Multiplexer (
         end
         else if (Selector == 2) begin
             out = DataIn[11:8];
-        end 
+        end
         else begin
             out = DataIn[15:12];
         end
     end
-
-  // End of your code
 endmodule
