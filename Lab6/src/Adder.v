@@ -5,10 +5,10 @@ module Adder (
 );
     // Adder computes sum = a + b
     // The module is useful when accumulating PC (Program Counter)
-
+    
     // TODO: implement your Adder here
     // Hint: you can use operator to implement (just add it)
-
+    assign sum=a+b;
 
 endmodule
 
