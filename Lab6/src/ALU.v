@@ -10,6 +10,9 @@ module ALU (
     // TODO: implement your ALU here
     // Hint: you can use operator to implement
 
+reg [3:0] ALUc;
+assign ALUctl = ALUc;
+
 localparam ADD = 4'b0000;
 localparam SUB = 4'b0001;
 localparam AND = 4'b0010;
@@ -24,7 +27,7 @@ localparam ADDIFNLT = 4'b1010;
 
 always @(*) begin
 
-    case (ALUC)
+    case (ALUc)
         ADD: begin
             ALUOut <= A + B;
         end

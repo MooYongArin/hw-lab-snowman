@@ -1,8 +1,8 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1741767939" />
-    <testcase name="TestTB" classname="TB" file="D:\xilinx_projects\snowman\Lab6\cocotb\TB.py" lineno="175" time="0.009536027908325195" sim_time_ns="25.001" ratio_time="2621.741488211616">
-      <failure message="Test failed with RANDOM_SEED=1741767939" />
+    <property name="random_seed" value="1741768545" />
+    <testcase name="TestTB" classname="TB" file="C:\Users\sippa\OneDrive\Documents\GitHub\HW_LAB\lab\lab6\hw-lab-snowman\Lab6\cocotb\TB.py" lineno="175" time="0.012952089309692383" sim_time_ns="25.001" ratio_time="1930.2677276392085">
+      <failure message="Test failed with RANDOM_SEED=1741768545" />
     </testcase>
   </testsuite>
 </testsuites>
