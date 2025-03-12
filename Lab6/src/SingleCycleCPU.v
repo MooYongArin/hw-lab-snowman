@@ -151,37 +151,10 @@ SevenSegmentDisplay #(
     .ControllerClockCycle   (1),
     .ControllerCounterWidth (1)
 ) (
-    .DataIn(),
+    .DataIn(reg5Dataw [15:0]),
     .Clk(clk),
     .Reset(start),
-    .Segments(),
-    .AN()
+    .Segments(segments),
+    .AN(an)
 );
-
-
-
-wire [1:0] selectorWire;
-wire [3:0] numberWire;
-
-SevenSegmentController #(
-    .ControllerClockCycle  (1),
-    .ControllerCounterWidth(1)
-) SevenSegmentControllerInst (
-    .Reset(Reset),
-    .Clk(Clk),
-    .AN(AN),
-    .Selector(selectorWire)
-);
-
-SevenSegmentMultiplexer SevenSegmentMultiplexerInst (
-    .DataIn(DataIn),
-    .Selector(selectorWire),
-    .DataOut(numberWire)
-);
-
-SevenSegmentDecoder SevenSegmentDecoderInst (
-    .DataIn(numberWire),
-    .Segments(Segments)
-);
-
 endmodule

@@ -24,7 +24,7 @@ module SevenSegmentDisplay #(
   wire [1:0]selector;
   wire [3:0]out;
 
-    Multiplexer  MultiplexerInst (
+    SevenSegmentMultiplexer  SevenSegmentMultiplexerInst (
         .DataIn(DataIn[15:0]),
         .DataOut(out[3:0]),
         .Selector(selector[1:0])
