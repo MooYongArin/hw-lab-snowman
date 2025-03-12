@@ -7,6 +7,7 @@ module BranchComp(
 
     // TODO: implement your branch comparator here for checking if
     // value is register is less than or equal to another register
-
+    assign brLt=(rs1<rs2);
+    assign brEq=(rs1==rs2);
 
 endmodule
