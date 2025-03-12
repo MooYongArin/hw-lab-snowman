@@ -8,7 +8,10 @@ module Adder (
     
     // TODO: implement your Adder here
     // Hint: you can use operator to implement (just add it)
-    assign sum=a+b;
-
+    reg [31:0] sumReg;
+    assign sum=sumReg;
+    always@(*) begin
+        sumReg=a+b;
+    end
 endmodule
 
