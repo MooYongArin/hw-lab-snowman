@@ -96,7 +96,7 @@ ImmGen m_ImmGen(
 );
 
 Mux2to1 #(.size(32)) m_Mux_PC(
-    .sel(),
+    .sel(PCSelw),
     .s0(add_ow),
     .s1(ALU_ow),
     .out(pc_iw)
@@ -150,7 +150,7 @@ BranchComp m_BranchComp(
 SevenSegmentDisplay #(
     .ControllerClockCycle   (1),
     .ControllerCounterWidth (1)
-) SevenSegmentDisplayInst (
+) SevenSegmentDisplayInst(
     .DataIn(reg5Dataw [15:0]),
     .Clk(clk),
     .Reset(start),
