@@ -12,7 +12,92 @@ module Control (
 
     // TODO: implement your Control here
     // Hint: follow the Architecture (figure in spec) to set output signal
-    
+    reg reg_memtoReg, reg_memRead, reg_ALUOp, reg_memWrite;
+    reg reg_ALUSrc1, reg_ALUSrc2, reg_regWrite, reg_PCSel;
+    assign memtoReg = reg_memtoReg;
+    assign memRead = reg_memRead;
+    assign ALUOp = reg_ALUOp;
+    assign memWrite = reg_memWrite;
+    assign ALUSrc1 = reg_ALUSrc1;
+    assign ALUSrc2 = reg_ALUSrc2;
+    assign regWrite = reg_regWrite;
+    assign PCSel = reg_PCSel;
+    always @(*) begin
+        case (opcode)
+            7'b0110011: begin // R-TYPE ADD, SUB, AND, OR, SLT
+                reg_memRead <= 0;
+                reg_memtoReg <= 0;
+                reg_ALUOp <= 0;
+                reg_memWrite <= 0;
+                reg_ALUSrc1 <= 0;
+                reg_ALUSrc2 <= 0;
+                reg_regWrite <= 1;
+                reg_PCSel <= 0;
+            end
+            7'b0010011: begin // I-TYPE ADDI, ANDI, ORI, XORI, SLTI
+                reg_memRead <= 0;
+                reg_memtoReg <= 0;
+                reg_ALUOp <= 0;
+                reg_memWrite <= 0;
+                reg_ALUSrc1 <= 1;
+                reg_ALUSrc2 <= 1;
+                reg_regWrite <= 1;
+                reg_PCSel <= 0;
+            end
+            7'b0000011: begin // I-TYPE LW
+                reg_memRead <= 1;
+                reg_memtoReg <= 1;
+                reg_ALUOp <= 0;
+                reg_memWrite <= 0;
+                reg_ALUSrc1 <= 1;
+                reg_ALUSrc2 <= 1;
+                reg_regWrite <= 1;
+                reg_PCSel <= 0;
+            end
+            7'b0100011: begin // S-TYPE SW
+                reg_memRead <= 0;
+                reg_memtoReg <= 0;
+                reg_ALUOp <= 0;
+                reg_memWrite <= 1;
+                reg_ALUSrc1 <= 1;
+                reg_ALUSrc2 <= 1;
+                reg_regWrite <= 0;
+                reg_PCSel <= 0;
+            end
+            7'b1100011: begin // B-TYPE BEQ, BNE, BLT, BGE
+                reg_memRead <= 0;
+                reg_memtoReg <= 0;
+                reg_ALUOp <= 1;
+                reg_memWrite <= 0;
+                reg_ALUSrc1 <= 0;
+                reg_ALUSrc2 <= 0;
+                reg_regWrite <= 0;
+                reg_PCSel <= 1;
+            end
+            7'b1101111: begin // J-TYPE JAL
+                reg_memRead <= 0;
+                reg_memtoReg <= 0;
+                reg_ALUOp <= 0;
+                reg_memWrite <= 0;
+                reg_ALUSrc1 <= 0;
+                reg_ALUSrc2 <= 0;
+                reg_regWrite <= 1;
+                reg_PCSel <= 2;
+            end
+            7'b1100111: begin // I-TYPE JALR
+                reg_memRead <= 0;
+                reg_memtoReg <= 0;
+                reg_ALUOp <= 0;
+                reg_memWrite <= 0;
+                reg_ALUSrc1 <= 1;
+                reg_ALUSrc2 <= 1;
+                reg_regWrite <= 1;
+                reg_PCSel <= 3;
+            end
+            default:  begin
+            end
+        endcase
+    end
 
 endmodule
 
