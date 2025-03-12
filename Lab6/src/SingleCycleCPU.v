@@ -129,4 +129,41 @@ BranchComp m_BranchComp(
     .brEq()
 );
 
+SevenSegmentDisplay #(
+    .ControllerClockCycle   (1),
+    .ControllerCounterWidth (1)
+) (
+    .DataIn(),
+    .Clk(),
+    .Reset(),
+    .Segments(),
+    .AN()
+);
+
+
+
+wire [1:0] selectorWire;
+wire [3:0] numberWire;
+
+SevenSegmentController #(
+    .ControllerClockCycle  (ControllerClockCycle),
+    .ControllerCounterWidth(ControllerCounterWidth)
+) SevenSegmentControllerInst (
+    .Reset(Reset),
+    .Clk(Clk),
+    .AN(AN),
+    .Selector(selectorWire)
+);
+
+Multiplexer MultiplexerInst (
+    .DataIn(DataIn),
+    .Selector(selectorWire),
+    .DataOut(numberWire)
+);
+
+SevenSegmentDecoder SevenSegmentDecoderInst (
+    .DataIn(numberWire),
+    .Segments(Segments)
+);
+
 endmodule
