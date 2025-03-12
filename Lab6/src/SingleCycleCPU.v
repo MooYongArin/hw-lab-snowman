@@ -152,8 +152,8 @@ SevenSegmentDisplay #(
     .ControllerCounterWidth (1)
 ) (
     .DataIn(),
-    .Clk(),
-    .Reset(),
+    .Clk(clk),
+    .Reset(start),
     .Segments(),
     .AN()
 );
@@ -164,8 +164,8 @@ wire [1:0] selectorWire;
 wire [3:0] numberWire;
 
 SevenSegmentController #(
-    .ControllerClockCycle  (ControllerClockCycle),
-    .ControllerCounterWidth(ControllerCounterWidth)
+    .ControllerClockCycle  (1),
+    .ControllerCounterWidth(1)
 ) SevenSegmentControllerInst (
     .Reset(Reset),
     .Clk(Clk),
