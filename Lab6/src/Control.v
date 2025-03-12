@@ -24,7 +24,7 @@ module Control (
     assign PCSel = reg_PCSel;
     always @(*) begin
         case (opcode)
-            7'b0110011: begin // R-TYPE ADD, SUB, AND, OR, SLT
+            7'b0110011: begin // R-TYPE ADD, SUB, AND, OR, SLT | ALUOp = 0
                 reg_memRead <= 0;
                 reg_memtoReg <= 0;
                 reg_ALUOp <= 0;
@@ -34,60 +34,60 @@ module Control (
                 reg_regWrite <= 1;
                 reg_PCSel <= 0;
             end
-            7'b0010011: begin // I-TYPE ADDI, ANDI, ORI, XORI, SLTI
+            7'b0010011: begin // I-TYPE ADDI, ANDI, ORI, XORI, SLTI | ALUOp = 1
                 reg_memRead <= 0;
                 reg_memtoReg <= 0;
-                reg_ALUOp <= 0;
+                reg_ALUOp <= 1;
                 reg_memWrite <= 0;
                 reg_ALUSrc1 <= 1;
                 reg_ALUSrc2 <= 1;
                 reg_regWrite <= 1;
                 reg_PCSel <= 0;
             end
-            7'b0000011: begin // I-TYPE LW
+            7'b0000011: begin // I-TYPE LW | ALUOp = 2
                 reg_memRead <= 1;
                 reg_memtoReg <= 1;
-                reg_ALUOp <= 0;
+                reg_ALUOp <= 2;
                 reg_memWrite <= 0;
                 reg_ALUSrc1 <= 1;
                 reg_ALUSrc2 <= 1;
                 reg_regWrite <= 1;
                 reg_PCSel <= 0;
             end
-            7'b0100011: begin // S-TYPE SW
+            7'b0100011: begin // S-TYPE SW | ALUOp = 3
                 reg_memRead <= 0;
                 reg_memtoReg <= 0;
-                reg_ALUOp <= 0;
+                reg_ALUOp <= 3;
                 reg_memWrite <= 1;
                 reg_ALUSrc1 <= 1;
                 reg_ALUSrc2 <= 1;
                 reg_regWrite <= 0;
                 reg_PCSel <= 0;
             end
-            7'b1100011: begin // B-TYPE BEQ, BNE, BLT, BGE
+            7'b1100011: begin // B-TYPE BEQ, BNE, BLT, BGE | ALUOp = 4
                 reg_memRead <= 0;
                 reg_memtoReg <= 0;
-                reg_ALUOp <= 1;
+                reg_ALUOp <= 4;
                 reg_memWrite <= 0;
                 reg_ALUSrc1 <= 0;
                 reg_ALUSrc2 <= 0;
                 reg_regWrite <= 0;
                 reg_PCSel <= 1;
             end
-            7'b1101111: begin // J-TYPE JAL
+            7'b1101111: begin // J-TYPE JAL | ALUOp = 5
                 reg_memRead <= 0;
                 reg_memtoReg <= 0;
-                reg_ALUOp <= 0;
+                reg_ALUOp <= 5;
                 reg_memWrite <= 0;
                 reg_ALUSrc1 <= 0;
                 reg_ALUSrc2 <= 0;
                 reg_regWrite <= 1;
                 reg_PCSel <= 2;
             end
-            7'b1100111: begin // I-TYPE JALR
+            7'b1100111: begin // I-TYPE JALR | ALUOp = 6
                 reg_memRead <= 0;
                 reg_memtoReg <= 0;
-                reg_ALUOp <= 0;
+                reg_ALUOp <= 6;
                 reg_memWrite <= 0;
                 reg_ALUSrc1 <= 1;
                 reg_ALUSrc2 <= 1;
