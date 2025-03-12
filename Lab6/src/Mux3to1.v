@@ -10,6 +10,19 @@ module Mux3to1 #(
 );
     // TODO: implement your 3to1 multiplexer here
 
+     reg [size-1:0]output;
+    assign out = output;
     
+    always @(*) begin
+        if (sel == 0) begin
+            output <= s0;
+        end
+        else if (sel == 1) begin
+            output <= s1;
+        end
+        else if (sel == 2) begin
+            output <= s2;
+        end
+    end
 endmodule
 
