@@ -150,11 +150,12 @@ BranchComp m_BranchComp(
 SevenSegmentDisplay #(
     .ControllerClockCycle   (1),
     .ControllerCounterWidth (1)
-) (
+) SevenSegmentDisplayInst (
     .DataIn(reg5Dataw [15:0]),
     .Clk(clk),
     .Reset(start),
     .Segments(segments),
     .AN(an)
 );
+
 endmodule
