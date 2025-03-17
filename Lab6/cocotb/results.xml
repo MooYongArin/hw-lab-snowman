@@ -1,8 +1,29 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1741768545" />
-    <testcase name="TestTB" classname="TB" file="C:\Users\sippa\OneDrive\Documents\GitHub\HW_LAB\lab\lab6\hw-lab-snowman\Lab6\cocotb\TB.py" lineno="175" time="0.012952089309692383" sim_time_ns="25.001" ratio_time="1930.2677276392085">
-      <failure message="Test failed with RANDOM_SEED=1741768545" />
+    <property name="random_seed" value="1742232221" />
+    <testcase name="Testcase01" classname="TB" file="C:\Users\sippa\OneDrive\Documents\GitHub\HW_LAB\lab\lab6\lab6-2\hw-lab-snowman\Lab6\cocotb\TB.py" lineno="264" time="0.0029528141021728516" sim_time_ns="0.001" ratio_time="0.3386599919257166">
+      <failure message="Test failed with RANDOM_SEED=1742232221" />
+    </testcase>
+    <testcase name="Testcase02" classname="TB" file="C:\Users\sippa\OneDrive\Documents\GitHub\HW_LAB\lab\lab6\lab6-2\hw-lab-snowman\Lab6\cocotb\TB.py" lineno="268" time="0.0" sim_time_ns="0.001" ratio_time="inf">
+      <failure message="Test failed with RANDOM_SEED=1742232221" />
+    </testcase>
+    <testcase name="Testcase03" classname="TB" file="C:\Users\sippa\OneDrive\Documents\GitHub\HW_LAB\lab\lab6\lab6-2\hw-lab-snowman\Lab6\cocotb\TB.py" lineno="272" time="0.0007219314575195312" sim_time_ns="0.001" ratio_time="1.3851730515191545">
+      <failure message="Test failed with RANDOM_SEED=1742232221" />
+    </testcase>
+    <testcase name="Testcase04" classname="TB" file="C:\Users\sippa\OneDrive\Documents\GitHub\HW_LAB\lab\lab6\lab6-2\hw-lab-snowman\Lab6\cocotb\TB.py" lineno="276" time="0.0" sim_time_ns="0.001" ratio_time="inf">
+      <failure message="Test failed with RANDOM_SEED=1742232221" />
+    </testcase>
+    <testcase name="Testcase05" classname="TB" file="C:\Users\sippa\OneDrive\Documents\GitHub\HW_LAB\lab\lab6\lab6-2\hw-lab-snowman\Lab6\cocotb\TB.py" lineno="280" time="0.0" sim_time_ns="0.001" ratio_time="inf">
+      <failure message="Test failed with RANDOM_SEED=1742232221" />
+    </testcase>
+    <testcase name="Testcase06" classname="TB" file="C:\Users\sippa\OneDrive\Documents\GitHub\HW_LAB\lab\lab6\lab6-2\hw-lab-snowman\Lab6\cocotb\TB.py" lineno="284" time="1.049041748046875e-05" sim_time_ns="0.001" ratio_time="95.32509090909092">
+      <failure message="Test failed with RANDOM_SEED=1742232221" />
+    </testcase>
+    <testcase name="Testcase07" classname="TB" file="C:\Users\sippa\OneDrive\Documents\GitHub\HW_LAB\lab\lab6\lab6-2\hw-lab-snowman\Lab6\cocotb\TB.py" lineno="288" time="0.0" sim_time_ns="0.001" ratio_time="inf">
+      <failure message="Test failed with RANDOM_SEED=1742232221" />
+    </testcase>
+    <testcase name="Testcase08" classname="TB" file="C:\Users\sippa\OneDrive\Documents\GitHub\HW_LAB\lab\lab6\lab6-2\hw-lab-snowman\Lab6\cocotb\TB.py" lineno="292" time="0.00011491775512695312" sim_time_ns="0.001" ratio_time="8.7018755186722">
+      <failure message="Test failed with RANDOM_SEED=1742232221" />
     </testcase>
   </testsuite>
 </testsuites>
