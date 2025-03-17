@@ -25,6 +25,7 @@ localparam ADDIFNEQ = 4'b1000;
 localparam ADDIFLT = 4'b1001;
 localparam ADDIFNLT = 4'b1010;
 
+/*
 always @(*) begin
 
     case (ALUc)
@@ -54,11 +55,11 @@ always @(*) begin
             if (A == B) begin
                 ALUOut <= A + B;
             end
-            /*
-            else begin
-                ALUOut <= A;
-            end
-            */
+            
+            //else begin
+            //    ALUOut <= A;
+            //end
+
         end
         ADDEVEN: begin
                 ALUOut <= A + B;
@@ -83,15 +84,32 @@ always @(*) begin
             //ALUOut = A;
         end
 
-
-
     endcase
-
-
 
 end
 
-
+endmodule
+*/
+    always @(*) begin
+        case (ALUctl)
+            ADD:     ALUOut <= A + B;
+            SUB:     ALUOut <= A - B;
+            AND:     ALUOut <= A & B;
+            OR:      ALUOut <= A | B;
+            SLT:     ALUOut <= (A < B) ? 1 : 0;
+            NOTHING: ALUOut <= A;
+            ADDIFEQ: ALUOut <= (A == B) ? A + B : A;
+            ADDEVEN: begin
+                ALUOut <= A + B;
+                ALUOut <= ALUOut & ~1; //force result to be even.
+            end
+            ADDIFNEQ: ALUOut <= (A != B) ? A + B : A;
+            ADDIFLT:  ALUOut <= (A < B) ? A + B : A;
+            ADDIFNLT: ALUOut <= (A >= B) ? A + B : A;
+            default:  ALUOut <= 32'bx;
+        endcase
+    end
 
 endmodule
+
 

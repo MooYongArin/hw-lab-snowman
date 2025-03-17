@@ -14,9 +14,6 @@ module ALUCtrl (
 
     // Hint: using ALUOp, funct7, funct3 to select exact operation
 
-
-    
-
 localparam ADD = 4'b0000;
 localparam SUB = 4'b0001;
 localparam AND = 4'b0010;
@@ -29,9 +26,7 @@ localparam ADDIFNEQ = 4'b1000;
 localparam ADDIFLT = 4'b1001;
 localparam ADDIFNLT = 4'b1010;
 
-
-
-always @(*) begin 
+always @(*) begin
     if (funct7 == 0 && funct3 == 3'b000 && ALUOp == 0) begin // ADD
         ALUCtl <= ADD;
     end else if (funct3 == 3'b000 && ALUOp == 1) begin //ADDI
@@ -66,20 +61,9 @@ always @(*) begin
         ALUCtl <= ADDIFLT;
     end else if (funct3 == 3'b101 && ALUOp == 4) begin //BGE
         ALUCtl <= ADDIFNLT;
-    end 
-
+    end
 
 end
-
-
-
-
-
-
-
-
-
-
 
 endmodule
 
