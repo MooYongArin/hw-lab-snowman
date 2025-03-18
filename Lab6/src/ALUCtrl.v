@@ -28,39 +28,41 @@ localparam ADDIFNLT = 4'b1010;
 
 always @(*) begin
     if (funct7 == 0 && funct3 == 3'b000 && ALUOp == 0) begin // ADD
-        ALUCtl <= ADD;
+        ALUCtl = ADD;
     end else if (funct3 == 3'b000 && ALUOp == 1) begin //ADDI
-        ALUCtl <= ADD;
+        ALUCtl = ADD;
     end else if (funct7 == 1 && funct3 == 3'b000 && ALUOp == 0) begin //SUB
-        ALUCtl <= SUB;
+        ALUCtl = SUB;
     end else if (funct7 == 0 && funct3 == 3'b111 && ALUOp == 0) begin //AND
-        ALUCtl <= AND;
+        ALUCtl = AND;
     end else if (funct3 == 3'b111 && ALUOp == 1) begin //ANDI
-        ALUCtl <= AND;
+        ALUCtl = AND;
     end else if (funct7 == 0 && funct3 == 3'b110 && ALUOp == 0) begin //OR
-        ALUCtl <= OR;
+        ALUCtl = OR;
     end else if (funct3 == 3'b110 && ALUOp == 1) begin //ORI
-        ALUCtl <= OR;
+        ALUCtl = OR;
     end else if (funct7 == 0 && funct3 == 3'b010 && ALUOp == 0) begin //SLT
-        ALUCtl <= SLT;
+        ALUCtl = SLT;
     end else if (funct3 == 3'b010 && ALUOp == 1) begin //SLTI
-        ALUCtl <= SLT;
+        ALUCtl = SLT;
     end else if (ALUOp == 2) begin //LW
-        ALUCtl <= ADD;
+        ALUCtl = ADD;
     end else if (ALUOp == 3) begin //SW
-        ALUCtl <= NOTHING;
+        ALUCtl = NOTHING;
     end else if (funct3 == 3'b000 && ALUOp == 4) begin //BEQ
-        ALUCtl <= ADDIFEQ;
+        ALUCtl = ADDIFEQ;
     end else if (ALUOp == 5) begin //JAL
-        ALUCtl <= ADD;
+        ALUCtl = ADD;
     end else if (ALUOp == 6) begin //JALR
-        ALUCtl <= ADDEVEN;
+        ALUCtl = ADDEVEN;
     end else if (funct3 == 3'b001 && ALUOp == 4) begin //BNE
-        ALUCtl <= ADDIFNEQ;
+        ALUCtl = ADDIFNEQ;
     end else if (funct3 == 3'b100 && ALUOp == 4) begin //BLT
-        ALUCtl <= ADDIFLT;
+        ALUCtl = ADDIFLT;
     end else if (funct3 == 3'b101 && ALUOp == 4) begin //BGE
-        ALUCtl <= ADDIFNLT;
+        ALUCtl = ADDIFNLT;
+    end else begin
+    ALUCtl = 4'b1111; // Assign a default value (e.g., ADD)
     end
 
 end

@@ -10,7 +10,7 @@ module Mux3to1 #(
 );
     // TODO: implement your 3to1 multiplexer here
 
-     reg [size-1:0] reg_out;
+    reg [size-1:0] reg_out;
     assign out = reg_out;
     always @(*) begin
         if (sel == 0) begin
@@ -23,5 +23,16 @@ module Mux3to1 #(
             reg_out <= s2;
         end
     end
+    
+  always @(sel) begin 
+    if (out === {32{1'bx}}) begin // Check if A contains any 'X's
+      $display("output All bits are X");
+    end else if (| (out ^ out)) begin //check if any bit is X
+      $display("out Invalid: %h ", out);
+    end else begin
+      $display("out Valid: %h ", out);
+    end
+  end
+  
 endmodule
 

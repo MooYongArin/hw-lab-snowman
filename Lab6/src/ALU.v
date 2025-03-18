@@ -10,8 +10,8 @@ module ALU (
     // TODO: implement your ALU here
     // Hint: you can use operator to implement
 
-reg [3:0] ALUc;
-assign ALUctl = ALUc;
+//reg [3:0] ALUc;
+//assign ALUctl = ALUc;
 
 localparam ADD = 4'b0000;
 localparam SUB = 4'b0001;
@@ -109,6 +109,31 @@ endmodule
             default:  ALUOut <= 32'bx;
         endcase
     end
+    
+    
+    
+    
+  always @(A) begin
+    if (A === {32{1'bx}}) begin // Check if A contains any 'X's
+      $display("A All bits are X");
+    end else if (| (A ^ A)) begin //check if any bit is X
+      $display("A Invalid: %h ", A);
+    end else begin
+      $display("A Valid: %h ", A);
+    end
+  end
+  always @(B) begin
+    if (B === {32{1'bx}}) begin // Check if A contains any 'X's
+      $display("B All bits are X");
+    end else if (| (B ^ B)) begin //check if any bit is X
+      $display("B Invalid: %h ", B);
+    end else begin
+      $display("B Valid: %h ", B);
+    end
+  end
+  
+  
+    
 
 endmodule
 
