@@ -45,15 +45,15 @@ always @(*) begin
         ALUCtl = SLT;
     end else if (funct3 == 3'b010 && ALUOp == 1) begin //SLTI
         ALUCtl = SLT;
-    end else if (ALUOp == 2) begin //LW
+    end else if (funct3 == 3'b010 && ALUOp == 2) begin //LW
         ALUCtl = ADD;
-    end else if (ALUOp == 3) begin //SW
-        ALUCtl = NOTHING;
+    end else if (funct3 == 3'b010 && ALUOp == 3) begin //SW
+        ALUCtl = ADD;//NOTHING
     end else if (funct3 == 3'b000 && ALUOp == 4) begin //BEQ
         ALUCtl = ADDIFEQ;
     end else if (ALUOp == 5) begin //JAL
         ALUCtl = ADD;
-    end else if (ALUOp == 6) begin //JALR
+    end else if (funct3 == 3'b000 && ALUOp == 6) begin //JALR
         ALUCtl = ADDEVEN;
     end else if (funct3 == 3'b001 && ALUOp == 4) begin //BNE
         ALUCtl = ADDIFNEQ;

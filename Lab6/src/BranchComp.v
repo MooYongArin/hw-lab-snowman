@@ -1,4 +1,4 @@
-module BranchComp(
+/*module BranchComp(
     input [31:0] rs1,       // First register value
     input [31:0] rs2,       // Second register value
     output brLt,            // Output for less than condition
@@ -16,3 +16,16 @@ module BranchComp(
     end
 endmodule
 
+*/
+
+module BranchComp(
+    input [31:0] rs1,
+    input [31:0] rs2,
+    output brLt,
+    output brEq
+);
+
+    assign brLt = (rs1 < rs2);
+    assign brEq = (rs1 == rs2);
+
+endmodule

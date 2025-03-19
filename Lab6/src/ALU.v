@@ -90,29 +90,30 @@ end
 
 endmodule
 */
+
     always @(*) begin
         case (ALUctl)
-            ADD:     ALUOut <= A + B;
-            SUB:     ALUOut <= A - B;
-            AND:     ALUOut <= A & B;
-            OR:      ALUOut <= A | B;
-            SLT:     ALUOut <= (A < B) ? 1 : 0;
-            NOTHING: ALUOut <= A;
-            ADDIFEQ: ALUOut <= (A == B) ? A + B : A;
+            ADD:     ALUOut = A + B;
+            SUB:     ALUOut = A - B;
+            AND:     ALUOut = A & B;
+            OR:      ALUOut = A | B;
+            SLT:     ALUOut = (A<B) ? 1 : 0;
+            NOTHING: ALUOut = A;
+            ADDIFEQ: ALUOut = (brEq) ? A + B : A + 4;
             ADDEVEN: begin
-                ALUOut <= A + B;
-                ALUOut <= ALUOut & ~1; //force result to be even.
+                ALUOut = A + B;
+                ALUOut = ALUOut & ~1; //force result to be even.
             end
-            ADDIFNEQ: ALUOut <= (A != B) ? A + B : A;
-            ADDIFLT:  ALUOut <= (A < B) ? A + B : A;
-            ADDIFNLT: ALUOut <= (A >= B) ? A + B : A;
-            default:  ALUOut <= 32'bx;
+            ADDIFNEQ: ALUOut = (!brEq) ? A + B : A + 4;
+            ADDIFLT:  ALUOut = (brLt) ? A + B : A + 4;
+            ADDIFNLT: ALUOut = (!brLt) ? A + B : A + 4;
+            default:  ALUOut = 32'b1;//x
         endcase
     end
     
     
     
-    
+    /*
   always @(A) begin
     if (A === {32{1'bx}}) begin // Check if A contains any 'X's
       $display("A All bits are X");
@@ -131,7 +132,7 @@ endmodule
       $display("B Valid: %h ", B);
     end
   end
-  
+  */
   
     
 
