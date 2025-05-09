@@ -1,0 +1,32 @@
+# Vivado build artifacts
+*.jou
+*.log
+*.str
+*.cache/
+*.webtalk/
+*.runs/
+*.sim/
+*.hw/
+*.ip_user_files/
+*.gen/
+*.tmp/
+*.rev/
+*.xpr.user
+*.xpr.bak
+*.wdb
+
+# Simulation output
+*.vcd
+*.vvp
+*.vlog
+
+# Ignore generated files from IPs
+*.xo
+*.xci
+*.veo
+*.vho
+
+# But keep source files
+!*.v
+!*.xpr
+!*.xdc
