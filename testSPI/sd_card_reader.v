@@ -11,7 +11,7 @@ module sd_card_reader (
     output reg [7:0] data_out,   // 8-bit data to controller
     output reg data_valid,       // Data valid signal
     output reg busy,             // Module busy
-    output reg error,             // Error flag
+    output reg error,            // Error flag
     output reg [7:0] debug_led
 );
 
@@ -51,30 +51,30 @@ module sd_card_reader (
     reg [31:0] current_sector;  // Current sector address
     reg [7:0] block_counter;    // Remaining blocks to read
     reg [7:0] resp_byte;        // Current response byte
-    reg resp_valid;             // Response byte valid  
-    
-    always @(*) begin
-        debug_led <= state + 7;
+    reg resp_valid;             // Response byte valid
+
+    always @(posedge clk) begin
+        debug_led <= state + 3;
     end
-    // Clock divider;
+
+    // Clock divider
     reg sck_toggle;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             div_counter <= 0;
             sck_toggle <= 0;
         end else begin
-            // Use 400 kHz for initialization, 12.5 MHz for reading
-            if (state <= S_INIT_CMD16) begin // init phase
+            if (state <= S_INIT_CMD16) begin
                 if (div_counter == INIT_DIV - 1) begin
                     div_counter <= 0;
-                    sck_toggle <= ~sck_toggle; //toggle sclk bit
+                    sck_toggle <= ~sck_toggle;
                 end else begin
                     div_counter <= div_counter + 1;
                 end
-            end else begin //communication phase
+            end else begin
                 if (div_counter == READ_DIV - 1) begin
                     div_counter <= 0;
-                    sck_toggle <= ~sck_toggle; //toggle sclk bit
+                    sck_toggle <= ~sck_toggle;
                 end else begin
                     div_counter <= div_counter + 1;
                 end
@@ -83,13 +83,14 @@ module sd_card_reader (
     end
 
     // Generate SCK (SPI Mode 0: idle low, sample on rising, shift on falling)
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin // reset: reset low
+    always @(posedge clk or negedge rst_n) begin
+
+        if (!rst_n) begin
             sck <= 0;
-        end else if (sck_en && div_counter == 0) begin //toggle SCLK 1 clock after sck_toggle
+        end else if (sck_en && div_counter == 0) begin
             sck <= sck_toggle;
-        end else begin //sck not enable || counter counting
-            sck <= 0; // Idle low when not enabled
+        end else begin
+            sck <= 0;
         end
     end
 
@@ -101,10 +102,10 @@ module sd_card_reader (
             bit_count <= 0;
         end else begin
             if (state == S_INIT_POWER) begin
-                mosi <= 1; // Set MOSI high during power-up
-            end else if (sck_en && div_counter == 0 && sck) begin // Falling edge: shift out
+                mosi <= 1;
+            end else if (sck_en && div_counter == 0 && sck) begin
                 if (bit_count == 0) begin
-                    shift_reg <= cmd_buffer[byte_count[2:0]]; // Load next byte
+                    shift_reg <= cmd_buffer[byte_count[2:0]];
                     mosi <= cmd_buffer[byte_count[2:0]][7];
                     bit_count <= 7;
                 end else begin
@@ -112,7 +113,7 @@ module sd_card_reader (
                     mosi <= shift_reg[6];
                     bit_count <= bit_count - 1;
                 end
-            end else if (sck_en && div_counter == 0 && !sck) begin // Rising edge: sample in
+            end else if (sck_en && div_counter == 0 && !sck) begin
                 shift_reg[bit_count] <= miso;
             end
         end
@@ -133,28 +134,28 @@ module sd_card_reader (
 
     // State machine: Next state logic
     always @(*) begin
-        next_state = state; // Default: stay in current state
+        next_state = state;
         case (state)
             S_INIT_POWER: begin
                 if (delay_count >= 1000)
                     next_state = S_INIT_CMD0;
             end
             S_INIT_CMD0: begin
-                if (resp_valid && resp_byte == 8'h01)
+                if (resp_valid && resp_byte == 8'h01 && byte_count >= 6)
                     next_state = S_INIT_CMD8;
-                else if (delay_count >= 10000)
+                else if (delay_count >= 100000) // Increased timeout
                     next_state = S_ERROR;
             end
             S_INIT_CMD8: begin
                 if (resp_valid && resp_byte == 8'h01 && byte_count == 5)
                     next_state = S_INIT_CMD55;
-                else if (delay_count >= 10000)
+                else if (delay_count >= 100000)
                     next_state = S_ERROR;
             end
             S_INIT_CMD55: begin
                 if (resp_valid && resp_byte == 8'h01)
                     next_state = S_INIT_ACMD41;
-                else if (delay_count >= 10000)
+                else if (delay_count >= 100000)
                     next_state = S_ERROR;
             end
             S_INIT_ACMD41: begin
@@ -168,7 +169,7 @@ module sd_card_reader (
             S_INIT_CMD16: begin
                 if (resp_valid && resp_byte == 8'h00)
                     next_state = S_IDLE;
-                else if (delay_count >= 10000)
+                else if (delay_count >= 100000)
                     next_state = S_ERROR;
             end
             S_IDLE: begin
@@ -178,7 +179,7 @@ module sd_card_reader (
             S_SEND_CMD17: begin
                 if (byte_count == 6 && resp_valid && resp_byte == 8'h00)
                     next_state = S_WAIT_TOKEN;
-                else if (delay_count >= 10000)
+                else if (delay_count >= 100000)
                     next_state = S_ERROR;
             end
             S_WAIT_TOKEN: begin
@@ -228,26 +229,30 @@ module sd_card_reader (
             cmd_buffer[4] <= 8'hFF;
             cmd_buffer[5] <= 8'hFF;
         end else begin
-            state <= next_state; // Update state
-            data_valid <= 0; // Default: no valid data
+            state <= next_state;
+            data_valid <= 0;
             case (state)
                 S_INIT_POWER: begin
                     cs_n <= 1;
                     sck_en <= 1;
-                    // mosi <= 1; // Removed: Handled in SPI shift register block
                     delay_count <= delay_count + 1;
                     busy <= 1;
                 end
                 S_INIT_CMD0: begin
                     cs_n <= 0;
                     sck_en <= 1;
-                    cmd_buffer[0] <= 8'h40; // CMD0: Go idle
-                    cmd_buffer[1] <= 8'h00;
-                    cmd_buffer[2] <= 8'h00;
-                    cmd_buffer[3] <= 8'h00;
-                    cmd_buffer[4] <= 8'h00;
-                    cmd_buffer[5] <= 8'h95; // CRC
-                    byte_count <= (byte_count < 6) ? byte_count + 1 : 0;
+                    if (byte_count < 6) begin
+                        cmd_buffer[0] <= 8'h40;
+                        cmd_buffer[1] <= 8'h00;
+                        cmd_buffer[2] <= 8'h00;
+                        cmd_buffer[3] <= 8'h00;
+                        cmd_buffer[4] <= 8'h00;
+                        cmd_buffer[5] <= 8'h95;
+                        byte_count <= byte_count + 1;
+                    end else begin
+                        cmd_buffer[0] <= 8'hFF;
+                        byte_count <= (byte_count < 10) ? byte_count + 1 : 10;
+                    end
                     if (resp_valid && resp_byte != 8'h01)
                         delay_count <= delay_count + 1;
                     else if (resp_valid)
@@ -256,12 +261,12 @@ module sd_card_reader (
                 S_INIT_CMD8: begin
                     cs_n <= 0;
                     sck_en <= 1;
-                    cmd_buffer[0] <= 8'h48; // CMD8: Voltage check
+                    cmd_buffer[0] <= 8'h48;
                     cmd_buffer[1] <= 8'h00;
                     cmd_buffer[2] <= 8'h00;
-                    cmd_buffer[3] <= 8'h01; // 2.7-3.6V
-                    cmd_buffer[4] <= 8'hAA; // Check pattern
-                    cmd_buffer[5] <= 8'h87; // CRC
+                    cmd_buffer[3] <= 8'h01;
+                    cmd_buffer[4] <= 8'hAA;
+                    cmd_buffer[5] <= 8'h87;
                     byte_count <= (byte_count < 10) ? byte_count + 1 : 0;
                     if (resp_valid && byte_count > 5)
                         resp_buffer[byte_count-6] <= resp_byte;
@@ -273,7 +278,7 @@ module sd_card_reader (
                 S_INIT_CMD55: begin
                     cs_n <= 0;
                     sck_en <= 1;
-                    cmd_buffer[0] <= 8'h77; // CMD55: App command
+                    cmd_buffer[0] <= 8'h77;
                     cmd_buffer[1] <= 8'h00;
                     cmd_buffer[2] <= 8'h00;
                     cmd_buffer[3] <= 8'h00;
@@ -288,8 +293,8 @@ module sd_card_reader (
                 S_INIT_ACMD41: begin
                     cs_n <= 0;
                     sck_en <= 1;
-                    cmd_buffer[0] <= 8'h69; // ACMD41: Initialize
-                    cmd_buffer[1] <= 8'h40; // HCS=1 (high capacity)
+                    cmd_buffer[0] <= 8'h69;
+                    cmd_buffer[1] <= 8'h40;
                     cmd_buffer[2] <= 8'h00;
                     cmd_buffer[3] <= 8'h00;
                     cmd_buffer[4] <= 8'h00;
@@ -303,10 +308,10 @@ module sd_card_reader (
                 S_INIT_CMD16: begin
                     cs_n <= 0;
                     sck_en <= 1;
-                    cmd_buffer[0] <= 8'h50; // CMD16: Set block length
+                    cmd_buffer[0] <= 8'h50;
                     cmd_buffer[1] <= 8'h00;
                     cmd_buffer[2] <= 8'h00;
-                    cmd_buffer[3] <= 8'h02; // 512 bytes
+                    cmd_buffer[3] <= 8'h02;
                     cmd_buffer[4] <= 8'h00;
                     cmd_buffer[5] <= 8'hFF;
                     byte_count <= (byte_count < 6) ? byte_count + 1 : 0;
@@ -330,13 +335,13 @@ module sd_card_reader (
                 S_SEND_CMD17: begin
                     cs_n <= 0;
                     sck_en <= 1;
-                    cmd_buffer[0] <= 8'h51; // CMD17: Read single block
+                    cmd_buffer[0] <= 8'h51;
                     cmd_buffer[1] <= current_sector[31:24];
                     cmd_buffer[2] <= current_sector[23:16];
                     cmd_buffer[3] <= current_sector[15:8];
                     cmd_buffer[4] <= current_sector[7:0];
-                    cmd_buffer[5] <= 8'hFF; // CRC ignored
-                    byte_count <= (byte_count < 6) ? byte_count + 1 : 6; // Hold at 6
+                    cmd_buffer[5] <= 8'hFF;
+                    byte_count <= (byte_count < 6) ? byte_count + 1 : 6;
                     if (byte_count != 6 || !resp_valid || resp_byte != 8'h00)
                         delay_count <= delay_count + 1;
                 end
