@@ -134,21 +134,20 @@ module sd_card_reader (
 
     // State machine: Next state logic
     always @(*) begin
-        next_state = state;
+        next_state = state; // Default: stay in current state
         case (state)
             S_INIT_POWER: begin
-                if (delay_count >= 1000) // ~10ms at 100 MHz, >74 clocks
+                if (delay_count >= 1000)
                     next_state = S_INIT_CMD0;
             end
             S_INIT_CMD0: begin
-                if (resp_valid && resp_byte == 8'h01) // R1: idle
-                    //next_state = S_INIT_CMD8; bypass voltage check
+                if (resp_valid && resp_byte == 8'h01)
                     next_state = S_INIT_CMD8;
-                else if (delay_count >= 10000) // Timeout ~100us
+                else if (delay_count >= 10000)
                     next_state = S_ERROR;
             end
             S_INIT_CMD8: begin
-                if (resp_valid && resp_byte == 8'h01 && byte_count == 5) // R7 complete
+                if (resp_valid && resp_byte == 8'h01 && byte_count == 5)
                     next_state = S_INIT_CMD55;
                 else if (delay_count >= 10000)
                     next_state = S_ERROR;
@@ -160,11 +159,11 @@ module sd_card_reader (
                     next_state = S_ERROR;
             end
             S_INIT_ACMD41: begin
-                if (resp_valid && resp_byte == 8'h00) // Card ready
+                if (resp_valid && resp_byte == 8'h00)
                     next_state = S_INIT_CMD16;
                 else if (resp_valid && resp_byte == 8'h01)
                     next_state = S_INIT_CMD55;
-                else if (delay_count >= 100000) // Longer timeout for init
+                else if (delay_count >= 100000)
                     next_state = S_ERROR;
             end
             S_INIT_CMD16: begin
@@ -178,23 +177,19 @@ module sd_card_reader (
                     next_state = S_SEND_CMD17;
             end
             S_SEND_CMD17: begin
-                next_state = S_WAIT_TOKEN;
-                //TODO: fix back
-                if (resp_valid && resp_byte == 8'h00)
+                if (byte_count == 6 && resp_valid && resp_byte == 8'h00)
                     next_state = S_WAIT_TOKEN;
                 else if (delay_count >= 10000)
                     next_state = S_ERROR;
             end
             S_WAIT_TOKEN: begin
-                next_state = S_READ_DATA;
-                //TODO: fix back
-                if (resp_valid && resp_byte == 8'hFE)
+                if (resp_valid && resp_byte == 8'hFE && bit_count == 0)
                     next_state = S_READ_DATA;
-                else if (delay_count >= 10000)
+                else if (delay_count >= 1000)
                     next_state = S_ERROR;
             end
             S_READ_DATA: begin
-                if (byte_count >= 514) // 512 data + 2 CRC
+                if (byte_count >= 514)
                     next_state = S_NEXT_BLOCK;
             end
             S_NEXT_BLOCK: begin
@@ -207,7 +202,7 @@ module sd_card_reader (
                 next_state = S_IDLE;
             end
             S_ERROR: begin
-                next_state = S_ERROR; // Stay until reset
+                next_state = S_ERROR;
             end
             default: next_state = S_ERROR;
         endcase
@@ -234,7 +229,7 @@ module sd_card_reader (
             cmd_buffer[4] <= 8'hFF;
             cmd_buffer[5] <= 8'hFF;
         end else begin
-            state <= next_state;
+            state <= next_state; // Update state
             data_valid <= 0; // Default: no valid data
             case (state)
                 S_INIT_POWER: begin
@@ -343,31 +338,18 @@ module sd_card_reader (
                     cmd_buffer[4] <= current_sector[7:0];
                     cmd_buffer[5] <= 8'hFF; // CRC ignored
                     byte_count <= (byte_count < 6) ? byte_count + 1 : 6; // Hold at 6
-                    if (byte_count == 6 && resp_valid && resp_byte == 8'h00) begin
-                        next_state = S_WAIT_TOKEN;
-                        delay_count <= 0;
-                    end else if (delay_count >= 10000) begin
-                        next_state = S_ERROR;
-                    end else begin
+                    if (byte_count != 6 || !resp_valid || resp_byte != 8'h00)
                         delay_count <= delay_count + 1;
-                    end
                 end
                 S_WAIT_TOKEN: begin
                     cs_n <= 0;
                     sck_en <= 1;
                     cmd_buffer[0] <= 8'hFF;
-                    if (resp_valid && resp_byte == 8'hFE && bit_count == 0) begin
-                        byte_count <= 0;
-                        next_state = S_READ_DATA;
-                    end else if (resp_valid) begin
-                        delay_count <= 0;
-                    end else if (delay_count >= 1000) begin // Reduce timeout to 10 μs for faster feedback
-                        next_state = S_ERROR;
-                    end else begin
+                    if (resp_valid && resp_byte != 8'hFE)
                         delay_count <= delay_count + 1;
-                    end
+                    else if (resp_valid)
+                        byte_count <= 0;
                 end
-
                 S_READ_DATA: begin
                     cs_n <= 0;
                     sck_en <= 1;
@@ -379,13 +361,8 @@ module sd_card_reader (
                             data_valid <= 1;
                         end
                     end
-                    if (byte_count >= 513) begin
-                        next_state = S_NEXT_BLOCK;
-                    end else if (delay_count >= 10000) begin
-                        next_state = S_ERROR;
-                    end else begin
+                    if (byte_count < 514)
                         delay_count <= delay_count + 1;
-                    end
                 end
                 S_NEXT_BLOCK: begin
                     cs_n <= 0;
