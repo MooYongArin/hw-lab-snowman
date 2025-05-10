@@ -11,9 +11,9 @@ module sd_card_reader (
     output reg [7:0] data_out,   // 8-bit data to controller
     output reg data_valid,       // Data valid signal
     output reg busy,             // Module busy
-    output reg error             // Error flag
+    output reg error,             // Error flag
 
-    output reg [7:0] debug_led;
+    output reg [7:0] debug_led
 );
 
     // Clock divider parameters
