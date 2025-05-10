@@ -56,7 +56,9 @@ module sd_card_reader (
 
     always @(posedge clk) begin
         if (data_valid)
-            debug_led <= data_out;
+            debug_led <= 1;
+        else 
+            debug_led <= 0;
     end
 
     // Clock divider
