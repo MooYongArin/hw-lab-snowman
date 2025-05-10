@@ -12,7 +12,6 @@ module sd_card_reader (
     output reg data_valid,       // Data valid signal
     output reg busy,             // Module busy
     output reg error,             // Error flag
-
     output reg [7:0] debug_led
 );
 
@@ -52,16 +51,12 @@ module sd_card_reader (
     reg [31:0] current_sector;  // Current sector address
     reg [7:0] block_counter;    // Remaining blocks to read
     reg [7:0] resp_byte;        // Current response byte
-    reg resp_valid;             // Response byte valid
-
-    always @(posedge clk) begin
-        if (data_valid)
-            debug_led <= 1;
-        else 
-            debug_led <= 0;
+    reg resp_valid;             // Response byte valid  
+    
+    always @(*) begin
+        debug_led <= state + 7;
     end
-
-    // Clock divider
+    // Clock divider;
     reg sck_toggle;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -76,7 +71,7 @@ module sd_card_reader (
                 end else begin
                     div_counter <= div_counter + 1;
                 end
-            end else begin //communacation phase
+            end else begin //communication phase
                 if (div_counter == READ_DIV - 1) begin
                     div_counter <= 0;
                     sck_toggle <= ~sck_toggle; //toggle sclk bit
@@ -104,18 +99,22 @@ module sd_card_reader (
             shift_reg <= 8'hFF;
             mosi <= 1;
             bit_count <= 0;
-        end else if (sck_en && div_counter == 0 && sck) begin // Falling edge: shift out
-            if (bit_count == 0) begin
-                shift_reg <= cmd_buffer[byte_count[2:0]]; // Load next byte
-                mosi <= cmd_buffer[byte_count[2:0]][7];
-                bit_count <= 7;
-            end else begin
-                shift_reg <= {shift_reg[6:0], 1'b0};
-                mosi <= shift_reg[6];
-                bit_count <= bit_count - 1;
+        end else begin
+            if (state == S_INIT_POWER) begin
+                mosi <= 1; // Set MOSI high during power-up
+            end else if (sck_en && div_counter == 0 && sck) begin // Falling edge: shift out
+                if (bit_count == 0) begin
+                    shift_reg <= cmd_buffer[byte_count[2:0]]; // Load next byte
+                    mosi <= cmd_buffer[byte_count[2:0]][7];
+                    bit_count <= 7;
+                end else begin
+                    shift_reg <= {shift_reg[6:0], 1'b0};
+                    mosi <= shift_reg[6];
+                    bit_count <= bit_count - 1;
+                end
+            end else if (sck_en && div_counter == 0 && !sck) begin // Rising edge: sample in
+                shift_reg[bit_count] <= miso;
             end
-        end else if (sck_en && div_counter == 0 && !sck) begin // Rising edge: sample in
-            shift_reg[bit_count] <= miso;
         end
     end
 
@@ -235,7 +234,7 @@ module sd_card_reader (
                 S_INIT_POWER: begin
                     cs_n <= 1;
                     sck_en <= 1;
-                    mosi <= 1;
+                    // mosi <= 1; // Removed: Handled in SPI shift register block
                     delay_count <= delay_count + 1;
                     busy <= 1;
                 end

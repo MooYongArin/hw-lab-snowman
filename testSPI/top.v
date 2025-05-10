@@ -35,7 +35,7 @@ module top (
     end
 
     // Assign outputs
-    assign led = debug_led;
+//    assign led = debug_led;
 
     // Instantiate SPI SD reader
     sd_card_reader sd (
@@ -51,7 +51,9 @@ module top (
         .data_out(data_out),
         .data_valid(data_valid),
         .busy(busy),
-        .error(error)
+        .error(error),
+//        .debug_led(led)
+        .data_out(led)
     );
 
 endmodule
