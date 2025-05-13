@@ -25,7 +25,7 @@ module top_level (
     wire [15:0] vga_data_out;
     wire [31:0] sd_start_address;
 
-    wire        read_enable = btnC; // Use Basys 3 button
+    wire read_enable; // Use Basys 3 button
 
     // --- Instantiate storage controller ---
     storage_controller u_storage (
@@ -65,6 +65,12 @@ module top_level (
     .enb(1'b1),           // Enable always on for read side
     .doutb(vga_data_out)
 );
+    InputSanitizer inputSanitizeInst(
+    .Clk(clk_100MHz),
+    .Reset(rst),
+    .DataIn(btnC),
+    .DataOut(read_enable)
+    );
 
 
     // --- sd_card_controller not implemented here ---

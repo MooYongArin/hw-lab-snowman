@@ -17,7 +17,8 @@ module storage_controller (
     input wire [15:0] vga_data_in,    // Data from RAM (RGB565)
     output wire [11:0] vga_pixel_rgb444, // Final VGA RGB444 output
 
-    output wire [31:0] sd_start_address // Start byte address for SD read
+    output wire [31:0] sd_start_address, // Start byte address for SD read
+    output wire sd_read
 );
 
     parameter IMAGE_SIZE = 76800;        // 320 * 240 pixels
@@ -33,7 +34,7 @@ module storage_controller (
     reg started = 0;
 
     assign sd_start_address = sd_start_address_reg;
-
+    assign sd_read=read_enable;
     always @(posedge clk_25MHz or posedge rst) begin
         if (rst) begin
             byte_flag <= 0;
