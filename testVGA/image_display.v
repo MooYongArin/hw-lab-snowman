@@ -7,14 +7,14 @@ module image_display (
     input visible,
     output reg [3:0] vga_r,
     output reg [3:0] vga_g,
-    output reg [3:0] vga_b,
-    output [16:0] image_addr  // 320x240 needs 76,800 pixels = 17 bits
+    output reg [3:0] vga_b
+//output [16:0] image_addr  // 320x240 needs 76,800 pixels = 17 bits
 );
 
     wire [9:0] x = h_cnt >> 1;  // downscale VGA 640x480 to 320x240
     wire [9:0] y = v_cnt >> 1;
 
-    assign image_addr = (y < 240 && x < 320) ? (y * 320 + x) : 0;
+//    assign image_addr = (y < 240 && x < 320) ? (y * 320 + x) : 0;
 
     always @(posedge clk) begin
         if (rst) begin

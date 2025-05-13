@@ -6,7 +6,11 @@ module top_level (
     input wire sd_data_valid,
     input wire [1:0] image_select,
 
-    output wire [11:0] vga_rgb_out
+    output wire hsync,            // VGA horizontal sync
+    output wire vsync,            // VGA vertical sync
+    output wire [3:0] vga_r,      // VGA red channel (RGB444)
+    output wire [3:0] vga_g,      // VGA green channel (RGB444)
+    output wire [3:0] vga_b       // VGA blue channel (RGB444)
 );
 
     // --- Internal clocks ---
@@ -23,6 +27,7 @@ module top_level (
 
     wire [16:0] vga_read_addr;
     wire [15:0] vga_data_out;
+    wire [11:0] vga_rgb_out;
     wire [31:0] sd_start_address;
 
     wire read_enable; // Use Basys 3 button
@@ -55,13 +60,12 @@ module top_level (
     .addra(ram_addr),
     .dina(ram_data),
     .wea(ram_write_en),
-    .ena(1'b1),           // Enable always on for write side
-    .douta(),             // Not used
+    .ena(1'b1),          // Enable always on for write side
+               
 
     // Port B (read - VGA side)
     .clkb(clk_100MHz),
     .addrb(vga_read_addr),
-    .dinb(16'd0),         // Not writing from Port B
     .enb(1'b1),           // Enable always on for read side
     .doutb(vga_data_out)
 );
@@ -70,6 +74,34 @@ module top_level (
     .Reset(rst),
     .DataIn(btnC),
     .DataOut(read_enable)
+    );
+    
+     // --- VGA Controller ---
+    wire [9:0] h_cnt, v_cnt;
+    wire visible;
+
+    vga_controller u_vga_ctrl (
+        .clk(clk_25MHz),
+        .rst(rst),
+        .h_cnt(h_cnt),
+        .v_cnt(v_cnt),
+        .hsync(hsync),
+        .vsync(vsync),
+        .visible(visible)
+    );
+
+    // --- Image Display ---
+    image_display u_image_display (
+        .clk(clk_25MHz),
+        .rst(rst),
+        .image_data(vga_rgb_out),
+        .h_cnt(h_cnt),
+        .v_cnt(v_cnt),
+        .visible(visible),
+        .vga_r(vga_r),
+        .vga_g(vga_g),
+        .vga_b(vga_b)
+//        .image_addr()
     );
 
 
