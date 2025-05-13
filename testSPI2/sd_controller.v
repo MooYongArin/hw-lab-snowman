@@ -44,8 +44,8 @@ module sd_controller(
     parameter CMD8 = 19;
     parameter CMD8_WAIT = 20;
     parameter CMD8_READ = 21;
-    parameter SEND_CMD = 22;
-    parameter RECEIVE_BYTE_WAIT = 23;
+    parameter SEND_CMD0 = 22;
+    parameter RECEIVE_BYTE_WAIT0 = 23;
     
     parameter IDLE = 6;
     parameter READ_BLOCK = 7;
