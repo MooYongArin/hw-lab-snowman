@@ -5,6 +5,7 @@
 module sd_top (
     input wire clk,              // 25 MHz system clock
     input wire reset,            // Reset input
+    input wire rd,            // Reset input
     input wire miso,             // SD card MISO (SD_DAT[0])
     output wire cs,              // SD card CS (SD_DAT[3])
     output wire mosi,            // SD card MOSI (SD_CMD)
@@ -19,7 +20,7 @@ module sd_top (
     sd_controller sd_inst (
         .clk(clk),
         .reset(reset),
-        .rd(1'b0),
+        .rd(rd),
         .address(32'h0),        // Tie off address to 0
         .miso(miso),
         .cs(cs),
