@@ -1,7 +1,7 @@
 module image_display (
     input clk,               // 25 MHz
     input rst,
-    input [7:0] image_data,  // pixel data (e.g., grayscale)
+    input [11:0] image_data,  // pixel data (e.g., grayscale)
     input [9:0] h_cnt,
     input [9:0] v_cnt,
     input visible,
@@ -17,10 +17,15 @@ module image_display (
     assign image_addr = (y < 240 && x < 320) ? (y * 320 + x) : 0;
 
     always @(posedge clk) begin
-        if (visible && x < 320 && y < 240) begin
-            vga_r <= image_data[7:4];
+        if (rst) begin
+            vga_r <= 0;
+            vga_g <= 0;
+            vga_b <= 0;
+        end
+        else if (visible && x < 320 && y < 240) begin
+            vga_r <= image_data[11:8];
             vga_g <= image_data[7:4];
-            vga_b <= image_data[7:4];
+            vga_b <= image_data[3:0];
         end else begin
             vga_r <= 0;
             vga_g <= 0;
