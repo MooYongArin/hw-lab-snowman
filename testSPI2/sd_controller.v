@@ -46,10 +46,13 @@ module sd_controller(
     parameter CMD8_READ = 21;
     parameter SEND_CMD0 = 22;
     parameter RECEIVE_BYTE_WAIT0 = 23;
+<<<<<<< HEAD
     parameter SEND_CMD55 = 24;
     parameter RECEIVE_BYTE_WAIT55 = 25;
     parameter SEND_CMD41 = 26;
     parameter RECEIVE_BYTE_WAIT41 = 27;
+=======
+>>>>>>> b96b9622715c5c472629c17224545fb8b084b70a
     
     parameter IDLE = 6;
     parameter READ_BLOCK = 7;
@@ -259,6 +262,7 @@ module sd_controller(
                     end
                     sclk_sig <= ~sclk_sig;
                 end
+<<<<<<< HEAD
                 SEND_CMD55: begin
                     if (sclk_sig == 1) begin
                         if (bit_counter == 0) begin
@@ -303,6 +307,8 @@ module sd_controller(
                     end
                     sclk_sig <= ~sclk_sig;
                 end
+=======
+>>>>>>> b96b9622715c5c472629c17224545fb8b084b70a
                 RECEIVE_BYTE: begin
                     byte_available <= 0;
                     if (sclk_sig == 1) begin
