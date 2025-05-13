@@ -19,7 +19,6 @@ module top_level (
 
     // --- Internal clocks ---
     wire clk_25MHz;
-    wire clk_50MHz = clk_100MHz; // Use 100MHz directly for VGA (or adjust if needed)
 
     clk_wiz_25 clkgen (
         .clk_in1(clk_100MHz),
@@ -45,7 +44,7 @@ module top_level (
 
     // --- SD Card Reader ---
     sd_card_reader u_sd_card_reader (
-        .clk(clk_100MHz),
+        .clk(clk_25MHz),
         .rst_n(~rst),
         .miso(miso),
         .start_read(start_read),
