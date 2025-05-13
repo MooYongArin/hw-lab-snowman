@@ -44,6 +44,8 @@ module sd_controller(
     parameter CMD8 = 19;
     parameter CMD8_WAIT = 20;
     parameter CMD8_READ = 21;
+    parameter SEND_CMD = 22;
+    parameter RECEIVE_BYTE_WAIT = 23;
     
     parameter IDLE = 6;
     parameter READ_BLOCK = 7;
@@ -58,6 +60,7 @@ module sd_controller(
     parameter WRITE_BLOCK_DATA = 16;
     parameter WRITE_BLOCK_BYTE = 17;
     parameter WRITE_BLOCK_WAIT = 18;
+
     
     parameter WRITE_DATA_SIZE = 515;
     
@@ -221,6 +224,28 @@ module sd_controller(
                     sclk_sig <= ~sclk_sig;
                 end
                 RECEIVE_BYTE_WAIT: begin
+                    if (sclk_sig == 1) begin
+                        if (miso == 0) begin
+                            recv_data <= 0;
+                            bit_counter <= 6;
+                            state <= RECEIVE_BYTE;
+                        end
+                    end
+                    sclk_sig <= ~sclk_sig;
+                end
+                SEND_CMD0: begin
+                    if (sclk_sig == 1) begin
+                        if (bit_counter == 0) begin
+                            state <= RECEIVE_BYTE_WAIT0;
+                        end
+                        else begin
+                            bit_counter <= bit_counter - 1;
+                            cmd_out <= {cmd_out[54:0], 1'b1};
+                        end
+                    end
+                    sclk_sig <= ~sclk_sig;
+                end
+                RECEIVE_BYTE_WAIT0: begin
                     if (sclk_sig == 1) begin
                         if (miso == 0) begin
                             recv_data <= 0;

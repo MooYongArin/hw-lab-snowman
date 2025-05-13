@@ -19,7 +19,7 @@ module sd_top (
     sd_controller sd_inst (
         .clk(clk),
         .reset(reset),
-        .rd(1'b1),
+        .rd(1'b0),
         .address(32'h0),        // Tie off address to 0
         .miso(miso),
         .cs(cs),
