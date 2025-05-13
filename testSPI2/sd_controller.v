@@ -44,6 +44,12 @@ module sd_controller(
     parameter CMD8 = 19;
     parameter CMD8_WAIT = 20;
     parameter CMD8_READ = 21;
+    parameter SEND_CMD0 = 22;
+    parameter RECEIVE_BYTE_WAIT0 = 23;
+    parameter SEND_CMD55 = 24;
+    parameter RECEIVE_BYTE_WAIT55 = 25;
+    parameter SEND_CMD41 = 26;
+    parameter RECEIVE_BYTE_WAIT41 = 27;
     
     parameter IDLE = 6;
     parameter READ_BLOCK = 7;
@@ -58,6 +64,7 @@ module sd_controller(
     parameter WRITE_BLOCK_DATA = 16;
     parameter WRITE_BLOCK_BYTE = 17;
     parameter WRITE_BLOCK_WAIT = 18;
+
     
     parameter WRITE_DATA_SIZE = 515;
     
@@ -112,7 +119,7 @@ module sd_controller(
                     cmd_out <= 56'hFF_40_00_00_00_00_95;
                     bit_counter <= 55;
                     return_state <= CMD8;
-                    state <= SEND_CMD;
+                    state <= SEND_CMD0;
                 end
                 //**********************************************************
                 CMD8: begin
@@ -146,13 +153,13 @@ module sd_controller(
                     cmd_out <= 56'hFF_77_00_00_00_00_01;
                     bit_counter <= 55;
                     return_state <= CMD41;
-                    state <= SEND_CMD;
+                    state <= SEND_CMD55;
                 end
                 CMD41: begin
                     cmd_out <= 56'hFF_69_00_00_00_00_01;
                     bit_counter <= 55;
                     return_state <= POLL_CMD;
-                    state <= SEND_CMD;
+                    state <= SEND_CMD41;
                 end
                 POLL_CMD: begin
                     if(recv_data[0] == 0) begin
@@ -221,6 +228,72 @@ module sd_controller(
                     sclk_sig <= ~sclk_sig;
                 end
                 RECEIVE_BYTE_WAIT: begin
+                    if (sclk_sig == 1) begin
+                        if (miso == 0) begin
+                            recv_data <= 0;
+                            bit_counter <= 6;
+                            state <= RECEIVE_BYTE;
+                        end
+                    end
+                    sclk_sig <= ~sclk_sig;
+                end
+                SEND_CMD0: begin
+                    if (sclk_sig == 1) begin
+                        if (bit_counter == 0) begin
+                            state <= RECEIVE_BYTE_WAIT0;
+                        end
+                        else begin
+                            bit_counter <= bit_counter - 1;
+                            cmd_out <= {cmd_out[54:0], 1'b1};
+                        end
+                    end
+                    sclk_sig <= ~sclk_sig;
+                end
+                RECEIVE_BYTE_WAIT0: begin
+                    if (sclk_sig == 1) begin
+                        if (miso == 0) begin
+                            recv_data <= 0;
+                            bit_counter <= 6;
+                            state <= RECEIVE_BYTE;
+                        end
+                    end
+                    sclk_sig <= ~sclk_sig;
+                end
+                SEND_CMD55: begin
+                    if (sclk_sig == 1) begin
+                        if (bit_counter == 0) begin
+                            state <= RECEIVE_BYTE_WAIT55;
+                        end
+                        else begin
+                            bit_counter <= bit_counter - 1;
+                            cmd_out <= {cmd_out[54:0], 1'b1};
+                        end
+                    end
+                    sclk_sig <= ~sclk_sig;
+                end
+                RECEIVE_BYTE_WAIT55: begin
+                    if (sclk_sig == 1) begin
+                        if (miso == 0) begin
+                            recv_data <= 0;
+                            bit_counter <= 6;
+                            state <= RECEIVE_BYTE;
+                        end
+                    end
+                    sclk_sig <= ~sclk_sig;
+                end
+                SEND_CMD41: begin
+                    if (sclk_sig == 1) begin
+                        if (bit_counter == 0) begin
+                            state <= RECEIVE_BYTE_WAIT41;
+                        end
+                        else begin
+                            bit_counter <= bit_counter - 1;
+                            cmd_out <= {cmd_out[54:0], 1'b1};
+                        end
+                    end
+                    sclk_sig <= ~sclk_sig;
+                end
+                RECEIVE_BYTE_WAIT41: begin
                     if (sclk_sig == 1) begin
                         if (miso == 0) begin
                             recv_data <= 0;
