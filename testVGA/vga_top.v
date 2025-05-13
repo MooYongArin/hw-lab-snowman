@@ -1,42 +1,49 @@
 module vga_top (
-    input clk_50mhz,          // VGA clock (50 MHz, driven by clock divider)
-    input rst,                // Reset signal (active-low)
-    input [16:0] img_addr,    // Image address (from storage controller)
-    input [15:0] image_data,  // Image data (RGB565 format from RAM)
-    output reg hsync,         // VGA horizontal sync
-    output reg vsync,         // VGA vertical sync
-    output reg [3:0] vga_r,   // VGA red output (RGB444 format)
-    output reg [3:0] vga_g,   // VGA green output (RGB444 format)
-    output reg [3:0] vga_b    // VGA blue output (RGB444 format)
+    input clk_25mhz,      // 25 MHz input clock
+    input rst,
+    output [3:0] vga_r,
+    output [3:0] vga_g,
+    output [3:0] vga_b,
+    output hsync,
+    output vsync
 );
 
-    wire [9:0] h_cnt, v_cnt;  // Horizontal and vertical counters for pixel positions
-    wire visible;              // Signal that indicates if the pixel is visible (inside display area)
+    wire [9:0] h_cnt, v_cnt;
+    wire visible;
 
-    // VGA Controller instance (generates sync signals and handles counters)
-    vga_controller u_vga_controller (
-        .clk(clk_50mhz),
+    // VGA Controller
+    vga_controller vga_ctrl (
+        .clk(clk_25mhz),
         .rst(rst),
-        .hsync(hsync),
-        .vsync(vsync),
         .h_cnt(h_cnt),
         .v_cnt(v_cnt),
+        .hsync(hsync),
+        .vsync(vsync),
         .visible(visible)
     );
 
-    // Process the image data and convert it from RGB565 to RGB444
-    always @(posedge clk_50mhz or posedge rst) begin
-        if (rst) begin
-            vga_r <= 4'b0000;
-            vga_g <= 4'b0000;
-            vga_b <= 4'b0000;
-        end else if (visible) begin
-            // Extract RGB565 data from image and convert to RGB444
-            // image_data is RGB565 format (5 bits red, 6 bits green, 5 bits blue)
-            vga_r <= image_data[15:12];  // Upper 4 bits of Red
-            vga_g <= image_data[10:7];   // Upper 4 bits of Green
-            vga_b <= image_data[4:1];    // Upper 4 bits of Blue
-        end
-    end
+    // Downscaled pixel coordinates for 320x240 image display
+    wire [9:0] x = h_cnt >> 1;
+    wire [9:0] y = v_cnt >> 1;
+
+    // Test Pattern Generator
+    wire [3:0] r = x[8:5];                     // Red gradient
+    wire [3:0] g = y[8:5];                     // Green gradient
+    wire [3:0] b = (x[6] ^ y[6]) ? 4'hF : 4'h0; // Blue checkerboard
+
+    wire [11:0] image_data = {r, g, b};        // Combine into RGB444
+
+    // Image Display
+    image_display display (
+        .clk(clk_25mhz),
+        .rst(rst),
+        .image_data(image_data),
+        .h_cnt(h_cnt),
+        .v_cnt(v_cnt),
+        .visible(visible),
+        .vga_r(vga_r),
+        .vga_g(vga_g),
+        .vga_b(vga_b)
+    );
 
 endmodule
